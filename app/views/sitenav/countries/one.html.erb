@@ -1,0 +1,288 @@
+<% content_for :title, "Country : %s" % @country_query["name"] %>
+<div class="row">
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+  <div class="col-md-8 col-lg-8 col-xl-6">
+    <div class="middletron shadow">
+      <div class="row">
+        <% if signed_in %>
+          <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+            <h1> <%= @country_query["name"] %> </h1>
+          </div>
+          <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 mt-2">
+            <span class="float-right"><button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-country-confirm-modal">Delete</button></span>
+            <span class="float-right mr-2"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-country-modal">Edit</button></span>
+          </div>
+        <% else %>
+          <div class="col col-sm col-md col-lg col-xl">
+            <h1> <%= @country_query["name"] %> </h1>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <% if @country_extract.present? %>
+        <p>
+          <%= @country_extract %>
+        </p>
+      <% end %>
+      <% if @country_extract.present? %>
+        <p><%= @country_query["name"] %> (ISO 3166: <%= @country_query["isoid"] %>) is a country of <%= ["about", "an estimated", "approximately", "around", "close to", "more or less", "roughly"].sample %> <%= number_with_delimiter(@country_query["population"]) %> people.</p>
+      <% else %>
+        <p><%= @country_query["name"] %> (ISO 3166: <%= @country_query["isoid"] %>), officially the <%= @country_query["offiname"] %>, is a country of <%= ["about", "an estimated", "approximately", "around", "close to", "more or less", "roughly"].sample %> <%= number_with_delimiter(@country_query["population"]) %> people.</p>
+      <% end %>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> National languages of <%= @country_query["name"] %> </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#country-page-add-language-as-national-modal">Add a language</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @natlangs_query.present? %>
+          <% for natlang_group in @natlangs_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for natlang in natlang_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/languages/<%= natlang["isoid"] %>"><h5> <%= natlang["name"] %> </h5></a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close country-page-delete-language-as-national-button" title="Remove <%= natlang["name"] %> from this list" aria-label="Close" data-country-isoid="<%= @country_query["isoid"] %>" data-country-name="<%= @country_query["name"] %>" data-language-isoid="<%= natlang["isoid"] %>" data-language-name="<%= natlang["name"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for natlang in natlang_group %>
+                  <a href="/languages/<%= natlang["isoid"] %>"><h5> <%= natlang["name"] %> </h5></a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> None listed. </h6>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> Languages spoken in <%= @country_query["name"] %> </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#country-page-add-language-as-spoken-modal">Add a language</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @spklangs_query.present? %>
+          <% for spklang_group in @spklangs_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for spklang in spklang_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/languages/<%= spklang["isoid"] %>"><h5> <%= spklang["name"] %> </h5></a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close country-page-delete-language-as-spoken-button" title="Remove <%= spklang["name"] %> from this list" aria-label="Close" data-country-isoid="<%= @country_query["isoid"] %>" data-country-name="<%= @country_query["name"] %>" data-language-isoid="<%= spklang["isoid"] %>" data-language-name="<%= spklang["name"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for spklang in spklang_group %>
+                  <a href="/languages/<%= spklang["isoid"] %>"><h5> <%= spklang["name"] %> </h5></a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> None listed. </h6>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+</div>
+
+<!-- Modals -->
+<% if signed_in %>
+
+  <!-- Add a language recognized as national -->
+  <div class="modal fade" id="country-page-add-language-as-national-modal" tabindex="-1" role="dialog" aria-labelledby="country-page-add-language-as-national-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-page-add-language-as-national-modal-title">This country recognizes ... as a national language</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'country-page-add-language-as-national-modal-select-field', 'Language', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= select_tag 'country-page-add-language-as-national-modal-select-field', raw("<option value=\"\">Select a language</option>" + @languages_list_for_add_national), class: 'form-control form-control-sm input-required' %>
+                  <div class="hidden error-message-div" id="country-page-add-language-as-national-modal-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="country-page-add-language-as-national-modal-submit-button" class="btn btn-sm btn-primary" data-country-isoid="<%= @country_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Add a language that this country speaks -->
+  <div class="modal fade" id="country-page-add-language-as-spoken-modal" tabindex="-1" role="dialog" aria-labelledby="country-page-add-language-as-spoken-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-page-add-language-as-spoken-modal-title">This country speaks...</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'country-page-add-language-as-spoken-modal-select-field', 'Language', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= select_tag 'country-page-add-language-as-spoken-modal-select-field', raw("<option value=\"\">Select a language</option>" + @languages_list_for_add_spoken), class: 'form-control form-control-sm input-required' %>
+                  <div class="hidden error-message-div" id="country-page-add-language-as-spoken-modal-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="country-page-add-language-as-spoken-modal-submit-button" class="btn btn-sm btn-primary" data-country-isoid="<%= @country_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit country -->
+  <div class="modal fade" id="edit-country-modal" tabindex="-1" role="dialog" aria-labelledby="edit-country-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="edit-country-modal-title">Editing Country: <%= @country_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'edit-country-modal-name-field', 'Name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'edit-country-modal-name-field', nil, class: 'form-control input-required', value: @country_query["name"], minlength: 1, maxlength: 75 %>
+                  <div class="hidden error-message-div" id="edit-country-modal-name-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'edit-country-modal-offiname-field', 'Official name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'edit-country-modal-offiname-field', nil, class: 'form-control input-required', value: @country_query["offiname"], minlength: 1, maxlength: 75 %>
+                  <div class="hidden error-message-div" id="edit-country-modal-offiname-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'edit-country-modal-isocode-field', 'ISO 3166 Code', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'edit-country-modal-isocode-field', nil, class: 'form-control input-required', value: @country_query["isoid"], minlength: 2, maxlength: 2 %>
+                  <div class="hidden error-message-div" id="edit-country-modal-isocode-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'edit-country-modal-population-field', 'Population', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= number_field_tag 'edit-country-modal-population-field', nil, class: 'form-control input-required', value: @country_query["population"] %>
+                  <div class="hidden error-message-div" id="edit-country-modal-population-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="edit-country-modal-submit-button" class="btn btn-sm btn-primary" data-country-isoid="<%= @country_query["isoid"] %>">Save</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete country -->
+  <div class="modal fade" id="delete-country-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="delete-country-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-country-confirm-modal-title">Deleting <%= @country_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p> Are you sure you would like to remove <%= @country_query["name"] %> from the database? Any associations with languages will also be deleted. </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="delete-country-confirm-modal-submit-button" class="btn btn-sm btn-danger" data-country-isoid="<%= @country_query["isoid"] %>">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language as national deletion confirmation -->
+  <div class="modal fade" id="country-page-delete-language-as-national-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="country-page-delete-language-as-national-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-page-delete-language-as-national-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam maxime recusandae accusantium, laudantium consectetur cumque eius, qui velit voluptatem, molestias, suscipit expedita? Odit, eos ea, cumque quae reprehenderit neque ex.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="country-page-delete-language-as-national-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language as spoken deletion confirmation -->
+  <div class="modal fade" id="country-page-delete-language-as-spoken-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="country-page-delete-language-as-spoken-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-page-delete-language-as-spoken-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est, fuga? Quasi, dicta sunt error beatae minus voluptates, ipsam, ipsa esse nisi earum, tempora illo pariatur! Quis laborum expedita nulla quod.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="country-page-delete-language-as-spoken-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

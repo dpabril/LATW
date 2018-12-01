@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= (yield(:title) + " | " unless yield(:title).blank?).to_s + "Languages Around the World" %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Google Fonts + Material Icons -->
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Serif+Pro" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <%= favicon_link_tag asset_path('LATWIcon.ico') %>
+
+    <!-- CSS and JS Assets -->
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+  </head>
+
+  <body>
+    <header>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2 col-lg-2 col-xl-3"></div>
+          <div class="col-sm col-md-8 col-lg-8 col-xl-6">
+            <nav id="bar" class="navbar navbar-expand-lg navbar-light shadow-lg mt-2">
+              <a class="navbar-brand" href="/" title="Home"><%= image_tag("Banner.png") %></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarsExample05">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link navbar-text" href="/languages"><span class="latw-nav-link">Languages</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link navbar-text" href="/families"><span class="latw-nav-link">Families</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link navbar-text" href="/scripts"><span class="latw-nav-link">Scripts</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link navbar-text" href="/countries"><span class="latw-nav-link">Countries</span></a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <div class="dropdown-menu" aria-labelledby="dropdown05">
+                      <a class="dropdown-item" href="/languages">Language</a>
+                      <a class="dropdown-item" href="/families">Language Families</a>
+                      <a class="dropdown-item" href="/scripts">Scripts</a>
+                      <a class="dropdown-item" href="/countries">Countries</a>
+                    </div>
+                  </li>
+                </ul>
+                <%= form_tag('/search', method: :get) do %>
+                  <%= text_field_tag 'site-search-field', nil, class: 'form-control form-control-sm', placeholder: 'Search the database' %>
+                <% end %> 
+              </div>
+            </nav>
+          </div>
+          <div class="col-md-2 col-lg-2 col-xl-3"></div>
+        </div>
+      </div>
+    </header>
+    
+    <main role="main">
+      <div class="container-fluid mt-2 mb-2">
+        <%= yield %>
+      </div>
+    </main>
+
+    <!-- <footer>
+      <div class="container-fluid"></div>
+    </footer> -->
+
+    <footer>
+      <div class="container-fluid mb-4">
+        <div class="row">
+          <div class="col-md-2 col-lg-2 col-xl-3"></div>
+          <div class="col-sm col-md-8 col-lg-8 col-xl-6">
+            <div id="signin-tron" class="jumbotron">
+              <div class="row">
+                <div class="col col-sm col-md col-lg col-xl"></div>
+                <div class="col col-sm col-md col-lg col-xl">
+                  <% if signed_in %>
+                    <p class="text-right">Signed in as <%= session[:username] %> | <a href="#signout" id="signout-link">Sign out</a></p>
+                  <% else %>
+                    <a href="#signin" id="signin-link" style="text-align: right" data-toggle="modal" data-target="#signin-modal"><p>Sign in</p></a>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2 col-lg-2 col-xl-3"></div>
+        </div>
+      </div>
+    </footer>
+
+    <% if !signed_in %>
+      <div class="modal fade" id="signin-modal" tabindex="-1" role="dialog" aria-labelledby="signin-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="signin-modal-title">Enter your credentials below</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <%= form_tag do %>
+              <div class="modal-body">
+                <div class="row form-group">
+                  <%= label_tag 'username-field', 'Username', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                  <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                    <%= text_field_tag 'username-field', nil, class: 'form-control input-required', maxlength: 20 %>
+                  </div>
+                </div>
+                <div class="row form-group">
+                  <%= label_tag 'password-field', 'Password', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                  <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                    <%= password_field_tag 'password-field', nil, class: 'form-control input-required' %>
+                    <div class="hidden error-message-div" id="signin-modal-error"><span class="error-message"></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" id="signin-modal-submit-button" class="btn btn-sm btn-primary">Sign in</button>
+              </div>
+            <% end %> 
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </body>
+</html>

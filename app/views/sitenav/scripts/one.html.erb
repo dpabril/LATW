@@ -1,0 +1,248 @@
+<% content_for :title, "Script : %s" % @script_query["name"] %>
+<div class="row">
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+  <div class="col-md-8 col-lg-8 col-xl-6">
+    <div class="middletron shadow">
+      <div class="row">
+        <% if signed_in %>
+          <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+            <h1> <%= @script_query["name"] %> </h1>
+          </div>
+          <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 mt-2">
+            <span class="float-right"><button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-script-confirm-modal">Delete</button></span>
+            <span class="float-right mr-2"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-script-modal">Edit</button></span>
+          </div>
+        <% else %>
+          <div class="col col-sm col-md col-lg col-xl">
+            <h1> <%= @script_query["name"] %> </h1>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <p> 
+        <% if @script_query["direction"] == "No information" or @script_query["direction"] == nil %>
+          There is no information pertaining to which direction the script <%= @script_query["name"] %> (ISO: <%= @script_query["isoid"] %>) is written.
+        <% else %>
+          <%= @script_query["name"] %> (ISO 15924: <%= @script_query["isoid"] %>) is a script written in a <%= @script_query["direction"] %> manner.
+        <% end %>
+        <% if @script_query["hascase"] == true %>
+          <%= @script_query["name"] %> characters and/or glyphs are distinguished with case.
+        <% else %>
+          <%= @script_query["name"] %> characters and/or glyphs are not distinguished with case.
+        <% end %>
+      </p>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> Languages that use <%= @script_query["name"] %> script </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#script-page-add-language-uses-script-modal">Add a language</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @langs_query.present? %>
+          <% for lang_group in @langs_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for lang in lang_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/languages/<%= lang["isoid"] %>"><h5> <%= lang["name"] %> </h5></a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close script-page-delete-script-as-used-button" title="Remove <%= lang["name"] %> from this list" aria-label="Close" data-script-isoid="<%= @script_query["isoid"] %>" data-script-name="<%= @script_query["name"] %>" data-language-isoid="<%= lang["isoid"] %>" data-language-name="<%= lang["name"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for lang in lang_group %>
+                  <a href="/languages/<%= lang["isoid"] %>"><h5> <%= lang["name"] %> </h5></a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> None listed. </h6>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+</div>
+
+<% if signed_in %>
+  <!-- Add a language which uses this script -->
+  <div class="modal fade" id="script-page-add-language-uses-script-modal" tabindex="-1" role="dialog" aria-labelledby="script-page-add-language-uses-script-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="script-page-add-language-uses-script-modal-title">This script is used to write...</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+            <div class="row form-group">
+              <%= label_tag 'script-page-add-language-uses-script-modal-select-field', 'Language', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+              <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                <%= select_tag 'script-page-add-language-uses-script-modal-select-field', raw("<option value=\"\">Select language</option>" + @languages_list_for_add_written), class: 'form-control form-control-sm input-required' %>
+                <div class="hidden error-message-div" id="script-page-add-language-uses-script-modal-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="script-page-add-language-uses-script-modal-submit-button" class="btn btn-sm btn-primary" data-script-isoid="<%= @script_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit this script -->
+  <div class="modal fade" id="edit-script-modal" tabindex="-1" role="dialog" aria-labelledby="edit-script-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="edit-script-modal-title">Editing Script: <%= @script_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+            <div class="row form-group">
+              <%= label_tag 'edit-script-modal-name-field', 'Name', class: 'col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4' %>
+              <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <%= text_field_tag 'edit-script-modal-name-field', nil, class: 'form-control input-required', value: @script_query["name"], minlength: 1, maxlength: 50 %>
+                <div class="hidden error-message-div" id="edit-script-modal-name-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <%= label_tag 'edit-script-modal-isocode-field', 'ISO 15924 Code', class: 'col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4' %>
+              <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <%= text_field_tag 'edit-script-modal-isocode-field', nil, class: 'form-control input-required', value: @script_query["isoid"], minlength: 4, maxlength: 4 %>
+                <div class="hidden error-message-div" id="edit-script-modal-isocode-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <%= label_tag 'edit-script-modal-direction-field', 'Direction', class: 'col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4' %>
+              <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <select name="edit-script-modal-direction-field" id="edit-script-modal-direction-field" class="form-control form-control-sm input-required">
+                  <% if @script_query["direction"] == "left-to-right" %>
+                    <option value="">Select a direction</option>
+                    <option value="left-to-right" selected="selected">Left-to-right</option>
+                    <option value="right-to-left">Right-to-left</option>
+                    <option value="vertical">Vertical</option>
+                    <option value="No information">No information</option>
+                  <% elsif @script_query["direction"] == "right-to-left" %>
+                    <option value="">Select a direction</option>
+                    <option value="left-to-right">Left-to-right</option>
+                    <option value="right-to-left" selected="selected">Right-to-left</option>
+                    <option value="vertical">Vertical</option>
+                    <option value="No information">No information</option>
+                  <% elsif @script_query["direction"] == "vertical" %>
+                    <option value="">Select a direction</option>
+                    <option value="left-to-right">Left-to-right</option>
+                    <option value="right-to-left">Right-to-left</option>
+                    <option value="vertical" selected="selected">Vertical</option>
+                    <option value="No information">No information</option>
+                  <% elsif @script_query["direction"] == "No information" or  @script_query["direction"] == nil %>
+                    <option value="">Select a direction</option>
+                    <option value="left-to-right">Left-to-right</option>
+                    <option value="right-to-left">Right-to-left</option>
+                    <option value="vertical">Vertical</option>
+                    <option value="No information" selected="selected">No information</option>
+                  <% end %>
+                </select>
+                <div class="hidden error-message-div" id="edit-script-modal-direction-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <%= label_tag 'edit-script-modal-case-field', 'Does this distinguish case?', class: 'col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4' %>
+              <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <div class="row">
+                  <div class="col col-sm col-md col-lg col-xl">
+                    <% if @script_query["hascase"] == true %>
+                      <div class="form-check form-check-inline">
+                        <input type="radio" name="edit-script-modal-case-choice" id="edit-script-modal-case-yes" class="form-check-input input-required" value="true" checked="checked">
+                        <label for="edit-script-modal-case-yes" class="form-check-label">Yes</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="radio" name="edit-script-modal-case-choice" id="edit-script-modal-case-no" class="form-check-input input-required" value="false">
+                        <label for="edit-script-modal-case-no" class="form-check-label">No</label>
+                      </div>
+                    <% else %>
+                      <div class="form-check form-check-inline">
+                        <input type="radio" name="edit-script-modal-case-choice" id="edit-script-modal-case-yes" class="form-check-input input-required" value="true">
+                        <label for="edit-script-modal-case-yes" class="form-check-label">Yes</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="radio" name="edit-script-modal-case-choice" id="edit-script-modal-case-no" class="form-check-input input-required" value="false" checked="checked">
+                        <label for="edit-script-modal-case-no" class="form-check-label">No</label>
+                      </div>
+                    <% end %>
+                    <div class="hidden error-message-div" id="edit-script-modal-case-error"><span class="error-message"></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="edit-script-modal-submit-button" class="btn btn-sm btn-primary" data-script-isoid="<%= @script_query["isoid"] %>">Save</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation -->
+    <div class="modal fade" id="delete-script-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="delete-script-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-script-confirm-modal-title">Deleting <%= @script_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p> Are you sure you would like to remove the <%= @script_query["name"] %> script entry from the database? Any associations with languages will also be removed. </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="delete-script-confirm-modal-submit-button" class="btn btn-sm btn-danger" data-script-isoid="<%= @script_query["isoid"] %>">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete language from list that uses script, confirmation -->
+  <div class="modal fade" id="script-page-delete-script-as-used-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="script-page-delete-script-as-used-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="script-page-delete-script-as-used-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias provident eum optio, labore, odit id aut voluptas temporibus, molestias accusamus nobis illo odio mollitia eligendi veritatis sequi! Nisi, praesentium illum?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="script-page-delete-script-as-used-confirm-modal-submit-button" class="btn btn-sm btn-danger" data-script-isoid="<%= @script_query["isoid"] %>">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<% end %>

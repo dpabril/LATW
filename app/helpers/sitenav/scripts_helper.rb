@@ -1,0 +1,2 @@
+module Sitenav::ScriptsHelper
+end

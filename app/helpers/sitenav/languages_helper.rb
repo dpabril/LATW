@@ -1,0 +1,2 @@
+module Sitenav::LanguagesHelper
+end

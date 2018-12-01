@@ -1,0 +1,464 @@
+<% content_for :title, "Language : %s" % @lang_query["name"] %>
+<div class="row">
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+  <div class="col-md-8 col-lg-8 col-xl-6">
+    <div class="middletron shadow">
+      <div class="row">
+        <% if signed_in %>
+          <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+            <h1> <%= @lang_query["name"] %> </h1>
+          </div>
+          <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 mt-2">
+            <span class="float-right"><button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-language-confirm-modal">Delete</button></span>
+            <span class="float-right mr-2"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-language-modal">Edit</button></span>
+          </div>
+        <% else %>
+          <div class="col col-sm col-md col-lg col-xl">
+            <h1> <%= @lang_query["name"] %> </h1>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <% if @lfam_query.present? %>
+        <p> <%= @lang_query["name"] %> (ISO 639-3: <%= @lang_query["isoid"] %>) belongs to the <a href="/families/<%= @lfam_query["name"] %>"><%= @lfam_query["name"] %></a> family of languages. It is spoken by <%= ["about", "an estimated", "approximately", "around", "close to", "more or less", "roughly"].sample %> <%= number_with_delimiter(@lang_query["population"]) %> people.</p>
+      <% else %>
+      <p> There appears to be no information in the database regarding the language family to which <%= @lang_query["name"] %> (ISO 639-3: <%= @lang_query["isoid"] %>) belongs.
+        <% if @lang_query["population"].nil? %>
+          There is no information on the number of native speakers of <%= @lang_query["name"] %>.
+        <% else %>
+          It is spoken by <%= ["about", "an estimated", "approximately", "around", "close to", "more or less", "roughly"].sample %> <%= number_with_delimiter(@lang_query["population"]) %> people.</p>
+        <% end %>
+      <% end %>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> Dialects </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#add-dialect-modal">Add a dialect</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @dias_query.present? %>
+          <% for dia_group in @dias_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for dia in dia_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <h5> <%= dia["name"] %> </h5>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close delete-dialect-button" title="Remove <%= dia["name"] %> from this list" aria-label="Close" data-language-isoid="<%= @lang_query["isoid"] %>" data-language-name="<%= @lang_query["name"] %>" data-dialect-name="<%= dia["name"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for dia in dia_group %>
+                  <div class="row">
+                    <div class="col col-sm col-md col-lg col-xl">
+                      <h5> <%= dia["name"] %> </h5>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> None listed. </h6>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> This is a national language in... </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#language-page-add-language-as-national-modal">Add country</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @countries_natl_query.present? %>
+          <% for country_group in @countries_natl_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for country in country_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/countries/<%= country["isoid"] %>"> <h5> <%= country["name"] %> </h5> </a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close language-page-delete-language-as-national-button" title="Remove <%= country["name"] %> from this list" aria-label="Close" data-language-isoid="<%= @lang_query["isoid"] %>" data-language-name="<%= @lang_query["name"] %>" data-country-name="<%= country["name"] %>" data-country-isoid="<%= country["isoid"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for country in country_group %>
+                  <a href="/countries/<%= country["isoid"] %>"> <h5> <%= country["name"] %> </h5> </a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> No information. </h6>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> This language is spoken in... </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#language-page-add-language-as-spoken-modal">Add country</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @countries_spoken_query.present? %>
+          <% for country_group in @countries_spoken_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for country in country_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/countries/<%= country["isoid"] %>"> <h5> <%= country["name"] %> </h5> </a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close language-page-delete-language-as-spoken-button" title="Remove <%= country["name"] %> from this list" aria-label="Close" data-language-isoid="<%= @lang_query["isoid"] %>" data-language-name="<%= @lang_query["name"] %>" data-country-name="<%= country["name"] %>" data-country-isoid="<%= country["isoid"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for country in country_group %>
+                  <a href="/countries/<%= country["isoid"] %>"> <h5> <%= country["name"] %> </h5> </a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> No information. </h6>
+          </div>
+        <% end %>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h3> This language is written using... </h3>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#language-page-add-language-uses-script-modal">Add script</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% if @scripts_query.present? %>
+          <% for script_group in @scripts_query.to_ary.in_groups(3, false) %>
+            <div class="mt-2 col col-sm col-md col-lg col-xl">
+              <% if signed_in %>
+                <% for script in script_group %>
+                  <div class="my-2 row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                      <a href="/scripts/<%= script["isoid"] %>"> <h5> <%= script["name"] %> Script </h5> </a>
+                    </div>
+                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                      <button type="button" class="close language-page-delete-script-as-used-button" title="Remove <%= script["name"] %> from this list" aria-label="Close" data-language-isoid="<%= @lang_query["isoid"] %>" data-language-name="<%= @lang_query["name"] %>" data-script-name="<%= script["name"] %>" data-script-isoid="<%= script["isoid"] %>"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <% for script in script_group %>
+                  <a href="/scripts/<%= script["isoid"] %>"> <h5> <%= script["name"] %> Script </h5> </a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="mt-2 col col-sm col-md col-lg col-xl">
+            <h6> No information. </h6>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+</div>
+
+<!-- Modals -->
+<% if signed_in %>
+
+  <!-- Add Dialect -->
+  <div class="modal fade" id="add-dialect-modal" tabindex="-1" role="dialog" aria-labelledby="add-dialect-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="add-dialect-modal-title">Adding a dialect</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'add-dialect-modal-name-field', 'Dialect name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'add-dialect-modal-name-field', nil, class: 'form-control input-required', minlength: 1, maxlength: 50 %>
+                  <div class="hidden error-message-div" id="add-dialect-modal-name-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="add-dialect-modal-submit-button" class="btn btn-sm btn-primary" data-language-isoid="<%= @lang_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Add country that recognizes this as a national language -->
+  <div class="modal fade" id="language-page-add-language-as-national-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-add-language-as-national-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-add-language-as-national-modal-title">This is a national language in...</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'language-page-add-language-as-national-modal-select-field', 'Country', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= select_tag 'language-page-add-language-as-national-modal-select-field', raw("<option value=\"\">Select a country</option>" + @countries_list_for_add_national), class: 'form-control form-control-sm input-required' %>
+                  <div class="hidden error-message-div" id="language-page-add-language-as-national-modal-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="language-page-add-language-as-national-modal-submit-button" class="btn btn-sm btn-primary" data-language-isoid="<%= @lang_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Add country that uses this language -->
+  <div class="modal fade" id="language-page-add-language-as-spoken-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-add-language-as-spoken-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-add-language-as-spoken-modal-title">This language is spoken in...</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'language-page-add-language-as-spoken-modal-select-field', 'Country', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= select_tag 'language-page-add-language-as-spoken-modal-select-field', raw("<option value=\"\">Select a country</option>" + @countries_list_for_add_spoken), class: 'form-control form-control-sm input-required' %>
+                  <div class="hidden error-message-div" id="language-page-add-language-as-spoken-modal-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="language-page-add-language-as-spoken-modal-submit-button" class="btn btn-sm btn-primary" data-language-isoid="<%= @lang_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Add scripts that this language uses -->
+  <div class="modal fade" id="language-page-add-language-uses-script-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-add-language-uses-script-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-add-language-uses-script-modal-title">This language is written using...</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'language-page-add-language-uses-script-modal-select-field', 'Script', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= select_tag 'language-page-add-language-uses-script-modal-select-field', raw("<option value=\"\">Select a script</option>" + @scripts_list_for_add_written), class: 'form-control form-control-sm input-required' %>
+                  <div class="hidden error-message-div" id="language-page-add-language-uses-script-modal-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="language-page-add-language-uses-script-modal-submit-button" class="btn btn-sm btn-primary" data-language-isoid="<%= @lang_query["isoid"] %>">Submit</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit language modal -->
+  <div class="modal fade" id="edit-language-modal" tabindex="-1" role="dialog" aria-labelledby="edit-language-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="edit-language-modal-title">Editing Language: <%= @lang_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= form_tag do %>
+          <div class="modal-body">
+            <div class="row form-group">
+              <%= label_tag 'edit-language-modal-name-field', 'Name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+              <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                <%= text_field_tag 'edit-language-modal-name-field', nil, class: 'form-control input-required', value: @lang_query["name"], minlength: 1, maxlength: 50 %>
+                <div class="hidden error-message-div" id="edit-language-modal-name-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <%= label_tag 'edit-language-modal-isocode-field', 'ISO 639-3 Code', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+              <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                <%= text_field_tag 'edit-language-modal-isocode-field', nil, class: 'form-control input-required', value: @lang_query["isoid"], minlength: 3, maxlength: 3 %>
+                <div class="hidden error-message-div" id="edit-language-modal-isocode-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <%= label_tag 'edit-language-modal-population-field', 'Population', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+              <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                <%= number_field_tag 'edit-language-modal-population-field', nil, class: 'form-control input-required', value: @lang_query["population"], maxlength: 10 %>
+                <div class="hidden error-message-div" id="edit-language-modal-population-error"><span class="error-message"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="edit-language-modal-submit-button" class="btn btn-sm btn-primary" data-language-isoid="<%= @lang_query["isoid"] %>">Save</button>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Language deletion confirmation -->
+  <div class="modal fade" id="delete-language-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="delete-language-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-language-confirm-modal-title">Deleting <%= @lang_query["name"] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p> Are you sure you would like to remove the <%= @lang_query["name"] %> language from the database? This action will also delete the language's dialects. </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="delete-language-confirm-modal-submit-button" class="btn btn-sm btn-danger" data-language-isoid="<%= @lang_query["isoid"] %>">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialect deletion confirmation -->
+  <div class="modal fade" id="delete-dialect-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="delete-dialect-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-dialect-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur assumenda officiis asperiores, non unde quam neque animi hic velit incidunt omnis esse maiores beatae mollitia laborum. Dolor nostrum, excepturi eligendi.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="delete-dialect-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language as national deletion confirmation -->
+  <div class="modal fade" id="language-page-delete-language-as-national-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-delete-language-as-national-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-delete-language-as-national-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore reprehenderit voluptate dolore autem inventore, iste repellendus consequatur aliquid. Repellendus ducimus esse, nesciunt quae! Voluptatibus expedita, voluptatem sint unde eveniet, laborum.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="language-page-delete-language-as-national-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language as spoken deletion confirmation -->
+  <div class="modal fade" id="language-page-delete-language-as-spoken-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-delete-language-as-spoken-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-delete-language-as-spoken-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur enim consequuntur nostrum nobis, recusandae quo ullam cum placeat, illo culpa omnis quidem voluptatem? A est impedit, iste sequi consectetur pariatur?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="language-page-delete-language-as-spoken-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script in use deletion confirmation -->
+  <div class="modal fade" id="language-page-delete-script-as-used-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="language-page-delete-script-as-used-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="language-page-delete-script-as-used-confirm-modal-title">Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="prompt">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi eos cum quaerat dolore rerum velit, aut, laborum facere corrupti ut, assumenda fugit expedita consequatur possimus animi dolorum aperiam explicabo quisquam.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" id="language-page-delete-script-as-used-confirm-modal-submit-button" class="btn btn-sm btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<% end %>

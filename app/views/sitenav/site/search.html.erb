@@ -1,0 +1,42 @@
+<% content_for :title, "Results for \"%s\"" % @search_key %>
+<% if @search_results_count > 0 %>
+  <div class="mt-3">
+    <div class="row">
+      <div class="col-md-2 col-lg-2 col-xl-3"></div>
+      <div class="col-md-8 col-lg-8 col-xl-6">
+        <div class="middletron shadow">
+          <h4> <%= @search_results_count %> <%= if @search_results_count == 1 then "result" else "results" end %> found for "<%= @search_key %>". </h4>
+          <% @search_results.each do |key, values| %>
+            <div class="mt-3">
+              <h3> <%= key[0] %> </h3>
+              <hr>
+              <% for value in values %>
+                <% if (key[0] == "Language Families") %>
+                  <a href="<%= key[1] %>/<%= value["name"] %>"><h5><%= value["name"] %></h5></a>
+                <% else %>
+                  <a href="<%= key[1] %>/<%= value["isoid"] %>"><h5><%= value["name"] %> [<%= value["isoid"] %>]</h5></a>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-md-2 col-lg-2 col-xl-3"></div>
+    </div>
+  </div>
+<% else %>
+  <div class="mt-3">
+    <div class="row">
+      <div class="col-md-2 col-lg-2 col-xl-3"></div>
+      <div class="col-md-8 col-lg-8 col-xl-6">
+        <div class="middletron shadow">
+          <h1>0 results found for "<%= @search_key %>".</h1>
+          <p>Oh no! The database lacks the information you seek :(</p>
+          <hr class="my-4">
+          <a href="<%= request.referrer %>"><p style="text-align: left">Back</p></a>
+        </div>
+      </div>
+      <div class="col-md-2 col-lg-2 col-xl-3"></div>
+    </div>
+  </div>
+<% end %>

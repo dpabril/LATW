@@ -1,0 +1,85 @@
+<% content_for :title, "Countries" %>
+<div class="row">
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+  <div class="col-md-8 col-lg-8 col-xl-6">
+    <div class="middletron shadow">
+      <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+          <h1> Country Index </h1>
+        </div>
+        <% if signed_in %>
+          <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 mt-2">
+            <span class="float-right"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#add-country-modal">Add a country</button></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <% for group in @index_list.to_a.in_groups(2, false) do %>
+          <div class="col-sm col-md col-lg col-xl">
+            <% group.each do |key, array| %>
+              <div class="mt-4">
+                <h2> <%= key %> </h2>
+                <hr>
+                <% for country in array %>
+                  <a href="/countries/<%= country["isoid"] %>"> <h5> <%= country["name"] %> </h5> </a>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+</div>
+
+<% if signed_in %>
+  <div class="modal fade" id="add-country-modal" tabindex="-1" role="dialog" aria-labelledby="add-country-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add-country-modal-title">Enter country's details below</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <%= form_tag do %>
+          <div class="modal-body">
+              <div class="row form-group">
+                <%= label_tag 'add-country-modal-name-field', 'Name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'add-country-modal-name-field', nil, class: 'form-control input-required', minlength: 1, maxlength: 75 %>
+                  <div class="hidden error-message-div" id="add-country-modal-name-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'add-country-modal-offiname-field', 'Official name', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'add-country-modal-offiname-field', nil, class: 'form-control input-required', minlength: 1, maxlength: 75 %>
+                  <div class="hidden error-message-div" id="add-country-modal-offiname-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'add-country-modal-isocode-field', 'ISO 3166 Code', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= text_field_tag 'add-country-modal-isocode-field', nil, placeholder: 'e.g. PH',class: 'form-control input-required', minlength: 2, maxlength: 2 %>
+                  <div class="hidden error-message-div" id="add-country-modal-isocode-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <%= label_tag 'add-country-modal-population-field', 'Population', class: 'col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3' %>
+                <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                  <%= number_field_tag 'add-country-modal-population-field', nil, class: 'form-control input-required' %>
+                  <div class="hidden error-message-div" id="add-country-modal-population-error"><span class="error-message"></span></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" id="add-country-modal-submit-button" class="btn btn-sm btn-primary">Submit</button>
+          </div>
+          <% end %> 
+        </div>
+    </div>
+  </div>
+<% end %>

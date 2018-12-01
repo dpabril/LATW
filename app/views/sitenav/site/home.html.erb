@@ -1,0 +1,34 @@
+<div class="row">
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+  <div class="col-md-8 col-lg-8 col-xl-6">
+    <div class="middletron shadow-lg">
+      <div class="row">
+        <div class="col col-sm col-md col-lg col-xl">
+          <% for i in 1..5 do %>
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+          <% end %>
+        </div>
+        <div class="col col-sm col-md col-lg col-xl">
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+          <h2 class="language-translation"> Language </h2>
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+        </div>
+        <div class="col col-sm col-md col-lg col-xl">
+          <% for i in 1..5 do %>
+          <h2 class="language-translation"> <%= @languageList.pop() %> </h2>
+          <% end %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md col-lg col-xl">
+          <hr>
+          <p> <span id="latw-home-page-title">&nbsp;Languages Around the World&nbsp;</span>&nbsp;is an undergraduate project written in partial completion of the requirements of the CS 165 : Database Systems course. Information found in this application were/are sourced from Ethnologue, Glottolog, and Wikipedia. </p>
+          <p> Click one of the links on the navigation bar above to get started. </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2 col-lg-2 col-xl-3"></div>
+</div>

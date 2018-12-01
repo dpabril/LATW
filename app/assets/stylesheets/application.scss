@@ -1,0 +1,162 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require bootstrap
+ *= require bootstrap-grid
+ *= require bootstrap-reboot
+ *= require_tree .
+ *= require_self
+ */
+
+// Red
+$oxblood : #76323F;
+$rusty-red : #984B43;
+$chili : #AF473C;
+$firebrick : #B22222;
+$indian-red : #CD5C5C;
+
+// White
+$white : #FFFFFF;
+$snow : #FFFAFA;
+$fresh : #F75FE6;
+$linen : #E9E9E9;
+$eggshell : #F5F5F5;
+$paper : #D5D5D5;
+$clean : #DFDCE3;
+
+body {
+    background-image: image-url("AsciiMap.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    font-family: 'Crimson Text', Garamond, Perpetua, 'Times New Roman', Times, serif;
+}
+
+a {
+    color: #2D98DA;
+}
+a:hover {
+    color: #2980B9;
+}
+
+hr {
+    margin-top: 0;
+}
+
+.turbolinks-progress-bar {
+    background-color: $indian-red;
+}
+
+#bar {
+    background: rgba(255, 250, 250, 0.88);
+    border-bottom: 0.15rem solid $indian-red;
+}
+
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-text:hover {
+    .latw-nav-link {
+        // border-bottom: 0.15rem solid $firebrick;
+        color: $firebrick;
+    }
+}
+
+#latw-home-page-title {
+    color: $white;
+    background-color: $firebrick;
+}
+
+.middletron {
+    padding:0.5rem 1rem;
+    margin-bottom: 1rem;
+    background: rgba(255, 250, 250, 0.95);
+    p {
+        font-size: 12.5pt;
+        text-align: justify;
+    }
+}
+
+@media (min-width:576px) {
+    .middletron {
+        padding:0.5rem 1rem;
+    }
+}
+
+#signin-tron {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.modal-content {
+    background-color: $snow;
+    p {
+        text-align: center;
+    }
+}
+
+.modal-header {
+    border-bottom: 1px solid $clean !important;
+}
+
+.modal-footer {
+    border-top: 1px solid $clean !important;
+}
+
+.btn-primary {
+    background-color: #2D98DA;
+    border-color: #2D98DA;
+}
+.btn-primary:hover {
+    background-color: #2980B9;
+    border-color: #2980B9;
+}
+.btn-primary.disabled, .btn-primary:disabled {
+    background-color: #2980B9;
+    border-color: #2980B9;
+}
+
+.btn-danger {
+    background-color: #C0392B;
+    border-color: #C0392B;
+}
+.btn-danger:hover {
+    background-color: $firebrick;
+    border-color: $firebrick;
+}
+.btn-danger.disabled, .btn-danger:disabled {
+    background-color: $firebrick;
+    border-color: $firebrick;
+}
+
+.language-translation {
+    text-align: center;
+}
+
+.invalid-input {
+    box-shadow: 0 0px 1.2px 1px #F00;
+}
+
+.error-message {
+    color: $firebrick;
+    font-size: 85%;
+}
+
+.hidden {
+    display: none;
+}
